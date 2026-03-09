@@ -5,10 +5,7 @@ using UnityEngine.U2D.Animation;
 
 public class SnowZombie : Zombie
 {
-    public GameObject iceShield;
-
-    bool haveIce = false;   //是否已创造过冰块
-    bool haveArm = true;   //是否有胳膊
+    bool haveArm = true;   //锟角凤拷锟叫胳膊
 
     private void fallArm()
     {
@@ -18,18 +15,9 @@ public class SnowZombie : Zombie
             .SetCategoryAndLabel("Arm", "Incomplete");
     }
 
-    //创造冰盾，拥有冰盾期间每秒恢复5点血量，直至回满继续行动
-    public void createIce()
-    {
-        myAnimator.SetBool("CreateIce", false);
-        
-        Instantiate(iceShield,
-                    transform.position + new Vector3(-0.3f, 0, 0),
-                    Quaternion.Euler(0, 0, 0))
-            .GetComponent<IceShield>().init(pos_row, gameObject);
-    }
 
-    //血量恢复函数
+
+    //血锟斤拷锟街革拷锟斤拷锟斤拷
     public void recover()
     {
         bloodVolume += 5;
@@ -52,14 +40,14 @@ public class SnowZombie : Zombie
     {
         base.attack();
 
-        //一定几率吐出寒气冻结植物
+        //一锟斤拷锟斤拷锟斤拷锟铰筹拷锟斤拷锟斤拷锟斤拷锟斤拷植锟斤拷
         if(Random.Range(1,6) == 1 && plant != null && plant.state != PlantState.Cold)
         {
             myAnimator.SetBool("FrozePlant", true);
         }
     }
 
-    //播放僵尸啃咬的音效
+    //锟斤拷锟脚斤拷尸锟斤拷咬锟斤拷锟斤拷效
     public override void PlayEatAudio()
     {
         audioSource.PlayOneShot(
@@ -67,24 +55,18 @@ public class SnowZombie : Zombie
         );
     }
 
-    //被攻击
+    //鍙楀埌鏀诲嚮
     public override void beAttacked(int hurt)
     {
         base.beAttacked(hurt);
-        if (bloodVolume <= 200 && haveIce == false)
-        {
-            haveIce = true;
-            myAnimator.SetBool("CreateIce", true);
-            myAnimator.SetBool("Walk", false);
-        }
-        else if(bloodVolume <= 100 && haveArm == true)
+        if(bloodVolume <= 100 && haveArm == true)
         {
             haveArm = false;
             fallArm();
         }
     }
 
-    //由于各个僵尸头部分可能不同，故该函数由子类重写
+    //锟斤拷锟节革拷锟斤拷锟斤拷尸头锟斤拷锟街匡拷锟杰诧拷同锟斤拷锟绞该猴拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷写
     protected override void hideHead()
     {
         transform.Find("head").gameObject.SetActive(false);

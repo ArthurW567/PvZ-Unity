@@ -14,78 +14,52 @@ public class Player : MonoBehaviour
     private Vector2 targetPosition;
     private bool isMoving = false;
     
-    // 植物格子位置数组（基于实际预制体中的坐标）
-    private Vector2[] plantGridPositions = new Vector2[]
-    {
-        // 第0行（最下面一行）
-        new Vector2(-2.5f, -2.2f),   // Plant-0-0
-        new Vector2(-1.67f, -2.2f),  // Plant-1-0
-        new Vector2(-0.82f, -2.2f),  // Plant-2-0
-        new Vector2(0.03f, -2.2f),   // Plant-3-0
-        new Vector2(0.88f, -2.2f),   // Plant-4-0
-        new Vector2(1.73f, -2.2f),   // Plant-5-0
-        new Vector2(2.59f, -2.2f),   // Plant-6-0
-        new Vector2(3.44f, -2.2f),   // Plant-7-0
-        new Vector2(4.3f, -2.2f),    // Plant-8-0
-        
-        // 第1行
-        new Vector2(-2.5f, -1.25f),  // Plant-0-1
-        new Vector2(-1.67f, -1.25f), // Plant-1-1
-        new Vector2(-0.82f, -1.25f), // Plant-2-1
-        new Vector2(0.03f, -1.25f),  // Plant-3-1
-        new Vector2(0.88f, -1.25f),  // Plant-4-1
-        new Vector2(1.73f, -1.25f),  // Plant-5-1
-        new Vector2(2.59f, -1.25f),  // Plant-6-1
-        new Vector2(3.44f, -1.25f),  // Plant-7-1
-        new Vector2(4.3f, -1.25f),   // Plant-8-1
-        
-        // 第2行
-        new Vector2(-2.5f, -0.3f),   // Plant-0-2
-        new Vector2(-1.67f, -0.3f),  // Plant-1-2
-        new Vector2(-0.82f, -0.3f),  // Plant-2-2
-        new Vector2(0.03f, -0.3f),   // Plant-3-2
-        new Vector2(0.88f, -0.3f),   // Plant-4-2
-        new Vector2(1.73f, -0.3f),   // Plant-5-2
-        new Vector2(2.59f, -0.3f),   // Plant-6-2
-        new Vector2(3.44f, -0.3f),   // Plant-7-2
-        new Vector2(4.3f, -0.3f),    // Plant-8-2
-        
-        // 第3行
-        new Vector2(-2.5f, 0.85f),   // Plant-0-3
-        new Vector2(-1.67f, 0.85f),  // Plant-1-3
-        new Vector2(-0.82f, 0.85f),  // Plant-2-3
-        new Vector2(0.03f, 0.85f),   // Plant-3-3
-        new Vector2(0.88f, 0.85f),   // Plant-4-3
-        new Vector2(1.76f, 0.85f),   // Plant-5-3
-        new Vector2(2.59f, 0.85f),   // Plant-6-3
-        new Vector2(3.44f, 0.85f),   // Plant-7-3
-        new Vector2(4.3f, 0.85f),    // Plant-8-3
-        
-        // 第4行（最上面一行）
-        new Vector2(-2.5f, 1.85f),   // Plant-0-4
-        new Vector2(-1.67f, 1.85f),  // Plant-1-4
-        new Vector2(-0.82f, 1.85f),  // Plant-2-4
-        new Vector2(0.03f, 1.85f),   // Plant-3-4
-        new Vector2(0.88f, 1.85f),   // Plant-4-4
-        new Vector2(1.73f, 1.85f),   // Plant-5-4
-        new Vector2(2.59f, 1.85f),   // Plant-6-4
-        new Vector2(3.44f, 1.85f),   // Plant-7-4
-        new Vector2(4.3f, 1.85f)      // Plant-8-4
-    };
+    // 存储场景中所有植物格子的位置
+    private List<Vector2> plantGridPositions = new List<Vector2>();
     
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        
+        // 动态获取场景中所有植物格子的位置
+        UpdatePlantGridPositions();
+        
         // 初始化目标位置为最近的植物格子
-        targetPosition = FindNearestGridPosition(transform.position);
-        transform.position = targetPosition;
-        Debug.Log("Player Start() called");
-        Debug.Log("Initial position: " + transform.position);
+        if (plantGridPositions.Count > 0)
+        {
+            targetPosition = FindNearestGridPosition(transform.position);
+            transform.position = targetPosition;
+            Debug.Log("Player Start() called");
+            Debug.Log("Initial position: " + transform.position);
+            Debug.Log("Found " + plantGridPositions.Count + " plant grids");
+        }
+        else
+        {
+            Debug.LogWarning("No plant grids found in the scene");
+        }
+    }
+    
+    // 更新植物格子位置列表
+    private void UpdatePlantGridPositions()
+    {
+        plantGridPositions.Clear();
+        
+        // 查找场景中所有带有PlantGrid组件的游戏对象
+        PlantGrid[] plantGrids = FindObjectsOfType<PlantGrid>();
+        
+        foreach (PlantGrid grid in plantGrids)
+        {
+            // 添加格子的世界坐标到列表
+            plantGridPositions.Add(grid.transform.position);
+        }
     }
     
     void Update()
     {
+        // 定期更新植物格子位置列表，以适应网格的变化
+        UpdatePlantGridPositions();
+        
         // 处理移动输入
         if (!isMoving)
         {
@@ -163,6 +137,11 @@ public class Player : MonoBehaviour
     
     Vector2 FindNearestGridPosition(Vector2 position)
     {
+        if (plantGridPositions.Count == 0)
+        {
+            return position;
+        }
+        
         Vector2 nearest = plantGridPositions[0];
         float minDistance = Vector2.Distance(position, nearest);
         

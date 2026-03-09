@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -137,15 +137,7 @@ public class Plant : MonoBehaviour
 
     }
 
-    public virtual void highlight()
-    {
-        GetComponent<SpriteRenderer>().color = new Color(0.75f, 0.75f, 0.75f);
-    }
 
-    public virtual void cancelHighlight()
-    {
-        GetComponent<SpriteRenderer>().color = Color.white;
-    }
 
     public virtual void initialize(PlantGrid grid, string sortingLayer, int sortingOrder)
     {

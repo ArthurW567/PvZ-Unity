@@ -57,36 +57,14 @@ public class MultiImagePlant : Plant
         GetComponent<Animator>().speed = 1f;
     }
 
-    public override void highlight()
-    {
-        SpriteRenderer[] spriteRenderers = gameObject.GetComponentsInChildren<SpriteRenderer>(true);
-        foreach (SpriteRenderer spriteRenderer in spriteRenderers)
-        {
-            if (spriteRenderer.gameObject.tag == "Plant")
-            {
-                spriteRenderer.color = new Color(0.75f, 0.75f, 0.75f);
-            }
-        }
-    }
 
-    public override void cancelHighlight()
-    {
-        SpriteRenderer[] spriteRenderers = gameObject.GetComponentsInChildren<SpriteRenderer>(true);
-        foreach (SpriteRenderer spriteRenderer in spriteRenderers)
-        {
-            if (spriteRenderer.gameObject.tag == "Plant")
-            {
-                spriteRenderer.color = Color.white;
-            }
-        }
-    }
 
     public override void initialize(PlantGrid grid, string sortingLayer, int sortingOrder)
     {
         row = grid.row;
         myGrid = grid;
 
-        //ÉèÖÃË³ÐòÍ¼²ã¼°ÏÔÊ¾Ë³Ðò
+        //ï¿½ï¿½ï¿½ï¿½Ë³ï¿½ï¿½Í¼ï¿½ã¼°ï¿½ï¿½Ê¾Ë³ï¿½ï¿½
         SpriteRenderer[] spriteRenderers = gameObject.GetComponentsInChildren<SpriteRenderer>(true);
         foreach (SpriteRenderer spriteRenderer in spriteRenderers)
         {
