@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -51,9 +51,12 @@ public class SunNumber : MonoBehaviour
 
     private void updateCard()
     {
-        foreach(Card i in cardGroup)
+        if(cardGroup != null)
         {
-            i.updateSunEnough(nowSun >= i.sunNeeded);
+            foreach(Card i in cardGroup)
+            {
+                i.updateSunEnough(nowSun >= i.sunNeeded);
+            }
         }
     }
 }

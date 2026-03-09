@@ -1,0 +1,52 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-12432" at "2026-03-01T01:09:06.5359313Z"
+[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 20720, path: "D:/unityhub/Unity Hub/UnityLicensingClient_V1/Unity.Licensing.Client.exe")
+[Licensing::Module] LicensingClient has failed validation; ignoring
+[Licensing::Client] Error: HandshakeResponse reported an error:
+	ResponseCode: 505
+	ResponseStatus: Unsupported protocol version '1.16.2'. Current supported versions are: 1.0,1.1,1.2,1.3,1.4,1.4.1,1.5,1.6,1.7,1.8,1.9,1.10
+[Licensing::Module] Error: Failed to handshake to channel: "LicenseClient-12432"
+[Licensing::IpcConnector] LicenseClient-12432 channel disconnected successfully.
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-12432-6000.1.13" at "2026-03-01T01:09:06.6062166Z"
+[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 34852, path: "D:/unity/6000.1.13f1/Editor/Data/Resources/Licensing/Client/Unity.Licensing.Client.exe")
+[Licensing::Module] LicensingClient has failed validation; ignoring
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.16.2+bdef8f5
+  Session Id:              001f002436b5409ead8f61db60d623ba
+  Correlation Id:          d91a49c4dbf33733ec882729c1b7326f
+  External correlation Id: 482950554484398993
+  Machine Id:              rdEldCI0s3U5AyUaPRkPpS4vsDI=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-12432-6000.1.13" (connect: 0.00s, validation: 0.01s, handshake: 0.02s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-12432-6000.1.13-notifications" at "2026-03-01T01:09:06.6321273Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Serial number assigned to: "F4-SKRP-MC3Y-TY9A-CMTQ-XXXX"
+[Licensing::Client] Successfully updated license, isAync: True, time: 3.04
+Built from '6000.1/staging' branch; Version is '6000.1.13f1 (418bd0acaa6b) revision 4295632'; Using compiler version '194234433'; Build Type 'Release'
+OS: 'Windows 11  (10.0.26200) 64bit CoreCountrySpecific' Language: 'zh' Physical Memory: 32491 MB
+[Licensing::Client] Successfully resolved entitlement details
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1, IsPro: 0
+Date: 2026-03-01T01:09:09Z
+
+COMMAND LINE ARGUMENTS:
+D:\unity\6000.1.13f1\Editor\Unity.exe
+-batchmode
+-projectPath
+e:\PvZ-Unity
+-executeMethod
+UnityEditor.SyncVS.SyncSolution
+-logFile
+e:\PvZ-Unity\SyncVS.log
+-quit
+Successfully changed project path to: e:\PvZ-Unity
+E:/PvZ-Unity
+It looks like another Unity instance is running with this project open.
+
+Multiple Unity instances cannot open the same project.
+
+Project: E:/PvZ-Unity
+Fatal Error! It looks like another Unity instance is running with this project open.
+
+Multiple Unity instances cannot open the same project.
+
+Project: E:/PvZ-Unity

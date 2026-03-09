@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -33,16 +33,22 @@ public class ZombieManagement : MonoBehaviour
 
     AudioSource audioSource;   //自身AudioSource组件
 
+    private bool initialized = false;
+
     private void Awake()
     {
+        Initialize();
+    }
+
+    private void Initialize()
+    {
+        if (initialized)
+            return;
+        
         //获取对象与组件
         audioSource = GetComponent<AudioSource>();
         flagMeter = GameObject.Find("FlagMeter-Slider").GetComponent<DecreasingSlider>();
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
+        
         //读取关卡json文件并转换为变量对象
         string info = Resources.Load<TextAsset>(
             "Json/ZombieData/Level" + GameManagement.levelData.level
@@ -62,10 +68,20 @@ public class ZombieManagement : MonoBehaviour
         nodeCount = timeNodes.info.Count;
         nowNode_index = 0;
         nowNode = timeNodes.info[nowNode_index];
+        
+        initialized = true;
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
     }
 
     public void activate()
     {
+        // Ensure initialization before activation
+        Initialize();
+        
         //准备第一波
         Invoke("enterTimeNode", nowNode.deltaTime);
     }

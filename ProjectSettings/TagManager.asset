@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
+  serializedVersion: 3
   tags:
   - Plant
   - AttackLine
@@ -24,7 +24,7 @@ TagManager:
   - Sun
   - Zombie
   - Plant
-  - 
+  - Player
   - 
   - 
   - 
@@ -103,3 +103,5 @@ TagManager:
   - name: TopUI
     uniqueID: 1777834707
     locked: 0
+  m_RenderingLayers:
+  - Default
