@@ -7,6 +7,10 @@ public class Player : MonoBehaviour
     public float attackRange = 2f;
     public float attackDamage = 50f;
     public float attackCooldown = 1f;
+    public float maxHealth = 100f;
+    public float currentHealth;
+    public GameObject healthBarObject; // 引用场景中的血条UI对象
+    private UnityEngine.UI.Image healthBar;
     
     private float lastAttackTime = 0f;
     private Rigidbody2D rb;
@@ -24,6 +28,17 @@ public class Player : MonoBehaviour
         
         // 动态获取场景中所有植物格子的位置
         UpdatePlantGridPositions();
+        
+        // 从 healthBarObject 中获取 healthBar 组件
+        if (healthBarObject != null)
+        {
+            healthBar = healthBarObject.transform.Find("HealthBar").GetComponent<UnityEngine.UI.Image>();
+            Debug.Log("Health bar component found: " + (healthBar != null));
+        }
+        
+        // 初始化血量
+        currentHealth = maxHealth;
+        UpdateHealthBar();
         
         // 初始化目标位置为最近的植物格子
         if (plantGridPositions.Count > 0)
@@ -190,5 +205,33 @@ public class Player : MonoBehaviour
         // 绘制攻击范围
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
+    }
+    
+    public void TakeDamage(float damage)
+    {
+        currentHealth -= damage;
+        Debug.Log("Player took damage: " + damage + ", current health: " + currentHealth);
+        if (currentHealth <= 0)
+        {
+            currentHealth = 0;
+            // 处理角色死亡
+            Die();
+        }
+        UpdateHealthBar();
+    }
+    
+    void Die()
+    {
+        // 这里可以添加死亡动画和逻辑
+        Debug.Log("Player died");
+        // 例如：Destroy(gameObject);
+    }
+    
+    void UpdateHealthBar()
+    {
+        if (healthBar != null)
+        {
+            healthBar.fillAmount = currentHealth / maxHealth;
+        }
     }
 }

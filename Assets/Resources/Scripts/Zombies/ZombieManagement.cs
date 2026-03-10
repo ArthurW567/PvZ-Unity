@@ -50,9 +50,20 @@ public class ZombieManagement : MonoBehaviour
         flagMeter = GameObject.Find("FlagMeter-Slider").GetComponent<DecreasingSlider>();
         
         //读取关卡json文件并转换为变量对象
-        string info = Resources.Load<TextAsset>(
-            "Json/ZombieData/Level" + GameManagement.levelData.level
-        ).text;
+        if (GameManagement.levelData == null)
+        {
+            Debug.LogError("GameManagement.levelData is null!");
+            return;
+        }
+        
+        TextAsset textAsset = Resources.Load<TextAsset>("Json/ZombieData/Level" + GameManagement.levelData.level);
+        if (textAsset == null)
+        {
+            Debug.LogError("Failed to load zombie data for level " + GameManagement.levelData.level);
+            return;
+        }
+        
+        string info = textAsset.text;
         timeNodes = JsonUtility.FromJson<TimeNodes>(info);
 
         //初始化可生成的僵尸的名称列表
@@ -116,12 +127,15 @@ public class ZombieManagement : MonoBehaviour
             rowList.Remove(randY);
             if (rowList.Count == 0) initRowList();
             //生成僵尸
-            GameObject newZombie = Instantiate(zombies[zombiesName[nowNode.zombie]],
-                new Vector3(initPos_x, GameManagement.levelData.zombieInitPosY[randY], 0),
-                Quaternion.Euler(0, 0, 0),
-                transform);
-            newZombie.GetComponent<Zombie>().setPosRow(randY);
-            addZombieNumAll();
+            if (GameManagement.levelData != null && GameManagement.levelData.zombieInitPosY != null && randY < GameManagement.levelData.zombieInitPosY.Count)
+            {
+                GameObject newZombie = Instantiate(zombies[zombiesName[nowNode.zombie]],
+                    new Vector3(initPos_x, GameManagement.levelData.zombieInitPosY[randY], 0),
+                    Quaternion.Euler(0, 0, 0),
+                    transform);
+                newZombie.GetComponent<Zombie>().setPosRow(randY);
+                addZombieNumAll();
+            }
         }
         changeTimeNode();
     }
@@ -155,21 +169,36 @@ public class ZombieManagement : MonoBehaviour
     //创造僵尸，上帝模式，用于对话
     public void createZombieByGod(string name, int posRow)
     {
-        GameObject newZombie = Instantiate(zombies[zombiesName[name]],
-            new Vector3(initPos_x, GameManagement.levelData.zombieInitPosY[posRow], 0),
-            Quaternion.Euler(0, 0, 0),
-            transform);
-        newZombie.GetComponent<Zombie>().setPosRow(posRow);
-        newZombie.GetComponent<Zombie>().cancelSleep();
-        addZombieNumAll();
+        if (GameManagement.levelData != null && GameManagement.levelData.zombieInitPosY != null && posRow < GameManagement.levelData.zombieInitPosY.Count)
+        {
+            GameObject newZombie = Instantiate(zombies[zombiesName[name]],
+                new Vector3(initPos_x, GameManagement.levelData.zombieInitPosY[posRow], 0),
+                Quaternion.Euler(0, 0, 0),
+                transform);
+            newZombie.GetComponent<Zombie>().setPosRow(posRow);
+            newZombie.GetComponent<Zombie>().cancelSleep();
+            addZombieNumAll();
+        }
     }
 
     //初始化可生成僵尸行列表
     private void initRowList()
     {
-        for (int i = 0; i < GameManagement.levelData.landRowCount; i++)
+        rowList.Clear();
+        if (GameManagement.levelData != null)
         {
-            rowList.Add(i);
+            for (int i = 0; i < GameManagement.levelData.landRowCount; i++)
+            {
+                rowList.Add(i);
+            }
+        }
+        else
+        {
+            // 默认添加5行
+            for (int i = 0; i < 5; i++)
+            {
+                rowList.Add(i);
+            }
         }
     }
 
@@ -233,29 +262,32 @@ public class ZombieManagement : MonoBehaviour
             for (int j = 0; j < zombieNum; j++)
             {
                 //生成僵尸
-                GameObject newZombie = Instantiate(zombies[zombiesName[nowNode.zombie]],
-                    new Vector3(
-                        initPos_x + allOffset + j * offset,
-                        GameManagement.levelData.zombieInitPosY[randY],
-                        0
-                    ),
-                    Quaternion.Euler(0, 0, 0),
-                    transform);
-                newZombie.GetComponent<Zombie>().setPosRow(randY);
-                addZombieNumAll();
-                //设置僵尸链表信息
-                if(last == null)
+                if (GameManagement.levelData != null && GameManagement.levelData.zombieInitPosY != null && randY < GameManagement.levelData.zombieInitPosY.Count)
                 {
-                    last = newZombie.GetComponent<ChineseZombie>();
-                    last.prior = null;
-                    last.isCaptain = true;
-                }
-                else
-                {
-                    ChineseZombie newCZ = newZombie.GetComponent<ChineseZombie>();
-                    last.next = newCZ;
-                    newCZ.prior = last;
-                    last = newCZ;
+                    GameObject newZombie = Instantiate(zombies[zombiesName[nowNode.zombie]],
+                        new Vector3(
+                            initPos_x + allOffset + j * offset,
+                            GameManagement.levelData.zombieInitPosY[randY],
+                            0
+                        ),
+                        Quaternion.Euler(0, 0, 0),
+                        transform);
+                    newZombie.GetComponent<Zombie>().setPosRow(randY);
+                    addZombieNumAll();
+                    //设置僵尸链表信息
+                    if(last == null)
+                    {
+                        last = newZombie.GetComponent<ChineseZombie>();
+                        last.prior = null;
+                        last.isCaptain = true;
+                    }
+                    else
+                    {
+                        ChineseZombie newCZ = newZombie.GetComponent<ChineseZombie>();
+                        last.next = newCZ;
+                        newCZ.prior = last;
+                        last = newCZ;
+                    }
                 }
             }
             last.next = null;
@@ -268,17 +300,29 @@ public class ZombieManagement : MonoBehaviour
     public void createGhost()
     {
         //获取随机行
-        int randY = Random.Range(0, GameManagement.levelData.rowCount);
+        int randY = 0;
+        if (GameManagement.levelData != null)
+        {
+            randY = Random.Range(0, GameManagement.levelData.rowCount);
+        }
+        else
+        {
+            randY = Random.Range(0, 5); // 默认5行
+        }
+        
         //生成幽灵
-        GameObject newZombie = Instantiate(zombies[zombiesName["Ghost"]],
-            new Vector3(initPos_x, GameManagement.levelData.zombieInitPosY[randY], 0),
-            Quaternion.Euler(0, 0, 0),
-            transform);
-        newZombie.GetComponent<Zombie>().setPosRow(randY);
-        //随机时间后再创造
-        if(nowNode_index <= 8)
-            Invoke("createGhost", Random.Range(15.0f, 20.0f));
-        else Invoke("createGhost", Random.Range(5.0f, 10.0f));
+        if (GameManagement.levelData != null && GameManagement.levelData.zombieInitPosY != null && randY < GameManagement.levelData.zombieInitPosY.Count)
+        {
+            GameObject newZombie = Instantiate(zombies[zombiesName["Ghost"]],
+                new Vector3(initPos_x, GameManagement.levelData.zombieInitPosY[randY], 0),
+                Quaternion.Euler(0, 0, 0),
+                transform);
+            newZombie.GetComponent<Zombie>().setPosRow(randY);
+            //随机时间后再创造
+            if(nowNode_index <= 8)
+                Invoke("createGhost", Random.Range(15.0f, 20.0f));
+            else Invoke("createGhost", Random.Range(5.0f, 10.0f));
+        }
     }
 
     #endregion
